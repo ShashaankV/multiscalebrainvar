@@ -11,15 +11,15 @@ Original code written by Benjamin P Cohen (<url>https://github.com/benja-matic</
 <i>Multiscale variability in neuronal competition. Benjamin P Cohen, Carson C Chow, and Shashaank Vattikuti. 	arXiv: [q-bio.NC]</i>
 
 
-## Getting Started
+## Prerequisites and data format
 
 Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" package. Main output is raster comma delimited files (spike neuron index and time). Plotting can be done using Julia or other code (not added yet).
 
 
 
-## Network architectures
+## Network architectures and code
 
-There are three network architectures: 1) unstructured, 2) mutual inhibition between unstructured pools, and 3) continuum model.
+There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_".
 
 
 <!--What things you need to install the software and how to install them -->
