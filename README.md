@@ -15,6 +15,8 @@ Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" packa
 ## Data
 
 Main output is raster in comma-delimited text file (spike neuron index and time).
+plotraster.py followed by <raster filename> can be used plot the results.
+Calculations such as CVISI, CVD, mean dominance, etc. will be added soon.  
 
 ## Code for three network architectures
 

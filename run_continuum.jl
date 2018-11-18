@@ -2,10 +2,10 @@ include("continuum.jl")
 include("analyze.jl")
 
 println("This code simulates rivalry in the continuum network with adaptation.
-Parameters for Figure 3 results.")
+Same parameters used for Figure 3 and 4.")
 
 using SpecialFunctions
-srand(2134)
+#srand(2134)
 
 #Coupling widths
 kee = .26
@@ -61,7 +61,7 @@ CSR = sparse_rep(W, N)
 #run simulation
 @time t, r = euler_lif_CSR(h, runtime, Ne, W, CSR, s1, s2, input_width, vth, tau_m, tau_s, tau_a, g_a, ang)
 
-fo="continuum_spikerecord.txt" #filename to save data under
+fo="raster_continuum.txt" #filename to save data under
 #write_raster: writes spikes times to comma-delimited text file
 #column 1: time (in iterations), column 2: neuron index
 write_raster(fo, t, r)

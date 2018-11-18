@@ -1,15 +1,15 @@
-#include("random_2x2_fast.jl")
-#using SpecialFunctions
-#requires Pkg.add("Random")
+#requires:
+#Pkg.add("Distributions")
 using Distributions
+
 include("2x2_measure_inputs.jl")
-#println("This code simulates a random EI network.
-#Each population receives an independent but statistically identical copy of an OU process as input.
-#Inhibitory neurons receive slightly weaker input than excitatory neurons.
-#This code shows that the network is tracking differences in the inputs.")
+println("This code simulates a random EI network as in Figure 2.
+Each population receives an independent but statistically identical copy of an OU process as input.
+Inhibitory neurons receive slightly weaker input than excitatory neurons.
+This code shows that the network is tracking differences in the inputs.")
 
 include("analyze.jl")
-srand(4321)
+#srand(4321)
 
 #Coupling parameters
 Aee = 12.5
@@ -29,7 +29,7 @@ Ne2 = round(Int64, Ne/2)
 Ni2 = round(Int64, Ni/2)
 
 #Time
-runtime = 10000 #ms
+runtime = 10*1000 #ms
 h = .1 #step size
 ntotal = round(runtime/h) #time points
 rt = runtime/1000 #runtime in seconds
@@ -80,6 +80,7 @@ W = local_random_2x2_symmetric(N, IFRAC, k, Aee, Aei, Aie, Aii);
 CSR = sparse_rep(W, N);
 
 #Do a simulation
+#returns spike time (t) and neuron-index (r)
 @time t, r = euler_lif_2x2_CSR_OU(h, runtime, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vth, tau_m, tau_s)
 
 #Chunk raster into excitatory and inhibitory components
@@ -106,12 +107,10 @@ sA_S = downsample(sA, s);
 #standardize time series
 sA_S2z = zscore(sA_S);
 s2z = zscore(s);
-#plot(sA_S2z);
-#plot(s2z);
 
 #write results to a file for later use
-write_raster("rast.txt", t, r)
-write_array("inputz.txt", sA_S2z)
-write_array("ratez.txt", s2z)
-write_array("input1.txt", fe1)
-write_array("input2.txt", fe2)
+write_raster("raster_unstructured.txt", t, r)
+#write_array("inputz.txt", sA_S2z)
+#write_array("ratez.txt", s2z)
+#write_array("input1.txt", fe1)
+#write_array("input2.txt", fe2)

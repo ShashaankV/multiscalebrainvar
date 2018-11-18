@@ -1,10 +1,9 @@
 
-println("This code simulates two mutually inhibiting random EI networks with adaptation.")
+println("This code simulates two mutually inhibiting random EI networks with adaptation.
+Same parameters used for Figure 3 and 4.")
 
 include("discreteMI.jl")
 include("analyze.jl")
-
-
 
 Aee = 10.5
 Aei = 20.
@@ -15,7 +14,7 @@ Aii = 45.
 s_strength = 5.
 fe1 = s_strength
 fe2 = fe1
-fi1 = 0.#fe - .15
+fi1 = 0.
 fi2 = fi1
 
 k = 200
@@ -40,7 +39,7 @@ g_a = 0.44
 
 min_e_neurons = 20
 min_i_neurons = 50
-runtime = 60*1000 #ms
+runtime = 10*1000 #ms
 h = .1 #timestep
 ntotal = round(runtime/h) #time points
 fbinsize = 400/h
@@ -55,7 +54,7 @@ CSR = sparse_rep(W, N);
 
 @time t, r = molda_euler_lif_CSR(h, runtime, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vth, tau_m, tau_s, tau_a, g_a)
 
-fo="discreteMI_spikerecord.txt" #filename to save data under
+fo="raster_discreteMI.txt" #filename to save data under
 #write_raster: writes spikes times to comma-delimited text file
 #column 1: time (in iterations), column 2: neuron index
 write_raster(fo, t, r)
@@ -106,6 +105,12 @@ FF_TOPD = fano_train(countFTD, -5)
 FF_BOTD = fano_train(countFBD, -5)
 
 #correlations
+#TU:= excitatory population 1 during dominance (up)
+#TD:= excitatory population 1 during suppression (down)
+#BU:= excitatory population 2 during dominance (up)
+#BD:= excitatory population 2 during suppression (down)
+
+
 cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000)
 cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000)
 cwBd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000)
@@ -118,11 +123,10 @@ CV_BD = CV_ISI(top, BN, tbdf, rbdf)
 CV_TD = CV_ISI(bot, TN, ttdf, rtdf)
 
 #dominance durations
-d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
+d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times)) #raw dominance durations, no thresholding
 cvd = cv(d)
 
-LP = .3
-
+LP = .3 #report threshold
 dx = []
 for i in d
     if i > LP
@@ -130,10 +134,10 @@ for i in d
     end
 end
 dx = convert(Array{Float64}, dx)
-cvdlp = cv(dx)
+cvdlp = cv(dx) #cvd after threshold
 
-MDT = tdom/length(top)
-MDB = bdom/length(bot)
+MDT = tdom/length(top) #mean dominance time pool 1
+MDB = bdom/length(bot) #mean dominance time pool 2
 MDN = tnmz/length(nmz)
 
 #println("##RESULT $(s_strength), $(tdom), $(bdom), $(length(times)), $(cvdlp), $(MDT), $(MDB), $(MDN)")
