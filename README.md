@@ -1,6 +1,6 @@
 # Multiscale variability in neuronal competition.
 
-Computer code accompanying manuscript on multiscale variability in neuronal competition. Here we model spiking and perceptual varibiality using a canonical cortical circuit model. Canonical in that it reproduces many basic (but nontrivial) cognitive traits. Cortical circuit in that in that it is based on fundamental neuronal properties such as spike frequency adaptation and reasonable neuron dynamics [may qualify this more]. System reproduces empirical spiking and perceptual variability statistics without added noise. The empirically-derived statistics are nontrivial and robust to stimulus conditions. 
+Computer code accompanying manuscript on multiscale variability in neuronal competition. Here we model spiking and perceptual varibiality using a canonical cortical circuit model. Canonical in that it reproduces many basic (but nontrivial) cognitive traits. Cortical circuit in that in that it is based on fundamental neuronal properties such as spike frequency adaptation and reasonable neuron dynamics [may qualify this more]. System reproduces empirical spiking and perceptual variability statistics without added noise. The empirically-derived statistics are nontrivial and robust to stimulus conditions.
 
 ## Credits
 
@@ -16,7 +16,7 @@ Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" packa
 
 Main output is raster in comma-delimited text file (spike neuron index and time).
 
-## Network architectures and code
+## Code for three network architectures
 
 There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_".
 
