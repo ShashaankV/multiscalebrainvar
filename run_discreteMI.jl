@@ -31,23 +31,17 @@ NeL = Int64(N2-NiL)
 Ne2 = NeL*2
 Ni2 = NiL*2
 
+Ne = div(N, 2)
+Ni = div(N, 2)
+
 vth = 20
 tau_m = 20.
 tau_s = 2.
 tau_a = 350.
 g_a = 0.44
 
-min_e_neurons = 20
-min_i_neurons = 50
 runtime = 10*1000 #ms
 h = .1 #timestep
-ntotal = round(runtime/h) #time points
-fbinsize = 400/h
-fbinsize = 100/h
-cbinsize = 100/h #correlation calc. window size
-netd_binsize = 50/h #dominance time window size
-end_trans = 0.
-rt = ((ntotal - end_trans)/1000.)*h
 
 W = homogenous_4x4_weights(N, IFRAC, k, Aee, Aei, Aie, Aie_NL, Aii);
 CSR = sparse_rep(W, N);
@@ -62,7 +56,8 @@ write_raster(fo, t, r)
 ###########################
 ###calculate statistics###
 ##########################
-###
+
+###prelims####
 e_m = find(r .<= Ne2);
 i_m = find(r .> Ne2);
 te = t[e_m];
@@ -88,45 +83,32 @@ tbdf, rbdf = ligase(top, tdom, te, re, BN) #bottom pool down states
 
 ttdf, rtdf = ligase(bot, bdom, te, re, TN) #top pool down states
 
-countFT = count_train_intron(fbinsize, ttf, rtf, TN, length(TN), false)
 
-countFB = count_train_intron(fbinsize, tbf, rbf, BN, length(BN), false)
+####main statistics###
+#T:= pool1
+#B:=pool 2
+#U: dominance state
+#D: suppressed state
 
-countFBD = count_train_intron(fbinsize, tbdf, rbdf, BN, length(BN), false)
-
-countFTD = count_train_intron(fbinsize, ttdf, rtdf, TN, length(TN), false)
-
-FF_TOP = fano_train(countFT, -5)
-
-FF_BOT = fano_train(countFB, -5)
-
-FF_TOPD = fano_train(countFTD, -5)
-
-FF_BOTD = fano_train(countFBD, -5)
-
-#correlations
-#TU:= excitatory population 1 during dominance (up)
-#TD:= excitatory population 1 during suppression (down)
-#BU:= excitatory population 2 during dominance (up)
-#BD:= excitatory population 2 during suppression (down)
-
-
+#correlations, vector across sampled neurons
 cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000)
 cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000)
 cwBd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000)
 cwTd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000)
 
-#CV ISI
+#CV ISI, vector across sampled neurons
 CV_TU = CV_ISI(top, TN, te, re)
 CV_BU = CV_ISI(bot, BN, te, re)
 CV_BD = CV_ISI(top, BN, tbdf, rbdf)
 CV_TD = CV_ISI(bot, TN, ttdf, rtdf)
 
-#dominance durations
-d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times)) #raw dominance durations, no thresholding
+#dominance durations, d and dx are arrays of dominance times
+d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
 cvd = cv(d)
 
-LP = .3 #report threshold
+#report thresholded (LP) dominance statistics
+LP = .3
+
 dx = []
 for i in d
     if i > LP
@@ -134,11 +116,9 @@ for i in d
     end
 end
 dx = convert(Array{Float64}, dx)
-cvdlp = cv(dx) #cvd after threshold
 
-MDT = tdom/length(top) #mean dominance time pool 1
-MDB = bdom/length(bot) #mean dominance time pool 2
+cvdlp = cv(dx) #cvd after thresholding
+
+MDT = tdom/length(top) #mean dominance, pool 1
+MDB = bdom/length(bot) #mean dominance, pool 2
 MDN = tnmz/length(nmz)
-
-#println("##RESULT $(s_strength), $(tdom), $(bdom), $(length(times)), $(cvdlp), $(MDT), $(MDB), $(MDN)")
-###

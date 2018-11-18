@@ -39,7 +39,7 @@ g_a = 0.013 #adaptation strength
 s1 = 3.
 s2 = 3.
 #Time
-runtime = 10*1000#ms
+runtime = 60*1000#ms
 h = .1 #time step
 ntotal = round(runtime/h) #time points
 rt = ((ntotal)/1000.)*h #runtime in seconds
@@ -62,6 +62,81 @@ CSR = sparse_rep(W, N)
 @time t, r = euler_lif_CSR(h, runtime, Ne, W, CSR, s1, s2, input_width, vth, tau_m, tau_s, tau_a, g_a, ang)
 
 fo="raster_continuum.txt" #filename to save data under
-#write_raster: writes spikes times to comma-delimited text file
+#write_raster: writes spike times to comma-delimited text file
 #column 1: time (in iterations), column 2: neuron index
 write_raster(fo, t, r)
+
+
+###########################
+###calculate statistics###
+##########################
+
+
+#prelims
+min_e_neurons = 20
+min_i_neurons = 50
+min_spikes_e = 10
+min_spikes_i = 10
+fbinsize = 400/h
+cbinsize = 100/h
+netd_binsize = 50/h
+
+e_m = find(r .<= Ne);
+# i_m = find(r .> Ne);
+te = t[e_m];
+re = r[e_m];
+# ti = t[i_m];
+# ri = r[i_m];
+
+er1 = Set(find(re .< Ne2));
+er2 = setdiff(Set(1:length(re)), er1);
+# ir1 = Set(find(ri .< Ne + Ni2));
+# ir2 = setdiff(Set(1:length(ri)), ir1);
+
+ntd, nts = nt_diff_H(te, re, ntotal, Ne2, netd_binsize);
+s = ntd ./ nts ;#signal for dominances
+flags, times = WLD_01(s, -.333, .333);
+
+
+TN, BN = Neurons_tb_ns(re, Ne2, 10, 100); #neurons in either pool who fired at least 10 spkes in simulation
+top, tdom, bot, bdom, nmz, tnmz = splice_flags(flags, times, netd_binsize); #find win, lose, and draw times
+tbf, rbf = ligase(bot, bdom, te, re, BN); #bottom pool up states
+ttf, rtf = ligase(top, tdom, te, re, TN); #top pool up states
+tbdf, rbdf = ligase(top, tdom, te, re, BN); #bottom pool down states
+ttdf, rtdf = ligase(bot, bdom, te, re, TN); #top pool down states
+
+###main statistics
+#T:= pool1
+#B:=pool 2
+#U: dominance state
+#D: suppressed state
+
+#spike-time correlations
+cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000);
+cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000);
+cwBd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000);
+cwTd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000);
+
+#CVISI
+CV_TU = CV_ISI(top, TN, te, re);
+CV_BU = CV_ISI(bot, BN, te, re);
+CV_BD = CV_ISI(top, BN, tbdf, rbdf);
+CV_TD = CV_ISI(bot, TN, ttdf, rtdf);
+
+#dominance statistics
+d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times));
+cvd = cv(d);
+
+LP = .3;
+
+dx = [];
+for i in d
+    if i > LP
+        push!(dx, i)
+    end
+end
+dx = convert(Array{Float64}, dx);
+cvdlp = cv(dx);
+
+
+MDT, MDB = (tdom*1./length(bot)), (bdom*1./length(top)); #bug?
