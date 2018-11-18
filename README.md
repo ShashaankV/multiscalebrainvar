@@ -1,6 +1,6 @@
 # Multiscale variability in neuronal competition.
 
-Computer code accompanying manuscript on multiscale variability in neuronal competition. Here we model spiking and perceptual varibiality using a canonical cortical circuit model. Canonical in that it reproduces many basic (but nontrivial) cognitive traits. Cortical circuit in that in that it is based on fundamental neuronal properties such as spike frequency adaptation and reasonable neuron dynamics [may qualify this more].  
+Computer code accompanying manuscript on multiscale variability in neuronal competition. Here we model spiking and perceptual varibiality using a canonical cortical circuit model. Canonical in that it reproduces many basic (but nontrivial) cognitive traits. Cortical circuit in that in that it is based on fundamental neuronal properties such as spike frequency adaptation and reasonable neuron dynamics [may qualify this more]. System reproduces empirical spiking and perceptual variability statistics without added noise. The empirically-derived statistics are nontrivial and robust to stimulus conditions. 
 
 ## Credits
 
