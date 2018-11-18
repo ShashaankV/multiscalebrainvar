@@ -1,7 +1,5 @@
 # Multiscale variability in neuronal competition.
 
-
-
 Computer code accompanying manuscript on multiscale variability in neuronal competition. Here we model spiking and perceptual varibiality using a canonical cortical circuit model. Canonical in that it reproduces many basic (but nontrivial) cognitive traits. Cortical circuit in that in that it is based on fundamental neuronal properties such as spike frequency adaptation and reasonable neuron dynamics [may qualify this more].  
 
 ## Credits
@@ -10,12 +8,13 @@ Original code written by Benjamin P Cohen (<url>https://github.com/benja-matic</
 
 <i>Multiscale variability in neuronal competition. Benjamin P Cohen, Carson C Chow, and Shashaank Vattikuti. 	arXiv: [q-bio.NC]</i>
 
+## Prerequisites
 
-## Prerequisites and data format
+Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" package.
 
-Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" package. Main output is raster comma delimited files (spike neuron index and time). Plotting can be done using Julia or other code (not added yet).
+## Data
 
-
+Main output is raster in comma-delimited text file (spike neuron index and time).
 
 ## Network architectures and code
 
