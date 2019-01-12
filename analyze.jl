@@ -499,7 +499,7 @@ end
 function count_train(t, r, Neurons, nn, binsize, shuff, CV)
   #t, r, and neurons are determined up front!
   if shuff == true
-    tp = shuffle(Neurons)  #in order to randomly sample neurons
+    tp = Random.shuffle(Neurons)  #in order to randomly sample neurons
   else
     tp = Neurons
   end
@@ -565,7 +565,7 @@ function rand_pair_cor(bin, lt, lr, Neurons, n)
   end
   bins = collect(lt[1]:bin:lt[end])
   ya = [] #if you already looked at this neuron
-  neurons = shuffle(Neurons) #
+  neurons = Random.shuffle(Neurons) #
   lank = length(Neurons)
   shank = zeros(lank, length(bins)-1) #store count trains as you go
   cor_store = []
@@ -634,7 +634,7 @@ function rand_pair_cor_e(bin, lt, lr, Neurons, n, error_code)
   end
   bins = collect(lt[1]:bin:lt[end])
   ya = [] #if you already looked at this neuron
-  neurons = shuffle(Neurons) #
+  neurons = Random.shuffle(Neurons) #
   lank = length(Neurons)
   shank = zeros(lank, length(bins)-1) #store count trains as you go
   cor_store = []
@@ -698,7 +698,7 @@ end
 #Get count trains within introns or exons
 function count_train_intron(bin, lt, lr, Neurons, n, shuff)
   if shuff == true
-    neurons = shuffle(Neurons)[1:n]
+    neurons = Random.shuffle(Neurons)[1:n]
   else
     neurons = Neurons[1:n]
   end
@@ -718,7 +718,7 @@ function count_train_intron_e(bin, lt, lr, Neurons, n, shuff, error_code)
     return error_code
   end
   if shuff == true
-    neurons = shuffle(Neurons)[1:n]
+    neurons = Random.shuffle(Neurons)[1:n]
   else
     neurons = Neurons[1:n]
   end
@@ -737,7 +737,7 @@ end
 function count_train(t, r, Neurons, nn, binsize, shuff, CV)
   #t, r, and neurons are determined up front!
   if shuff == true
-    tp = shuffle(Neurons)  #in order to randomly sample neurons
+    tp = Random.shuffle(Neurons)  #in order to randomly sample neurons
   else
     tp = Neurons
   end

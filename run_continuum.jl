@@ -5,6 +5,8 @@ println("This code simulates rivalry in the continuum network with adaptation.
 Same parameters used for Figure 3 and 4.")
 
 using SpecialFunctions
+using Random
+using Statistics
 #srand(2134)
 
 #Coupling widths
@@ -124,7 +126,7 @@ CV_BD = CV_ISI(top, BN, tbdf, rbdf);
 CV_TD = CV_ISI(bot, TN, ttdf, rtdf);
 
 #dominance statistics
-d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times));
+d = convert(Array{Float64}, diff(netd_binsize/(1000. / h) .* times));
 cvd = cv(d);
 
 LP = .3;
@@ -139,4 +141,4 @@ dx = convert(Array{Float64}, dx);
 cvdlp = cv(dx);
 
 
-MDT, MDB = (tdom*1./length(bot)), (bdom*1./length(top)); #bug?
+MDT, MDB = (tdom*1. / length(top)), (bdom*1. / length(bot)); #bug?
