@@ -4,7 +4,7 @@ function cv(isi)
 end
 
 function sd_2_k(sd)
-  return 1./(2*pi*((sd)^2))
+  return 1. / (2*pi*((sd)^2))
 end
 
 function FANO(aRAY)
@@ -1090,7 +1090,7 @@ function Rivalry_Analysis(t, r, Input, adapt, end_trans, Ne, Ni, half_e, min_e_n
   s = ntd ./ nts #signal for dominances
   flags, times = WLD_01(s, -.333, .333)
 
-  d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
+  d = convert(Array{Float64}, diff(netd_binsize/(1000. / h) .* times))
   cvd = cv(d) ###Raw estimate of CVD, likely to include very rapid switches which should really be smoothed out
 
   LP = .3

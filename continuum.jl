@@ -1,5 +1,5 @@
 function von_mises_dist(x, k, mu, N)
-  a = exp.(k*cos.(x-mu))/(N*besseli(0, k))
+  a = exp.(k*cos.(x .- mu))/(N*besseli(0, k))
 end
 ###why didn't I divide by 2pi?
 ###indefinite integral of VM dist = 1/2pi,so I multiplied by 2pi to get unit area
@@ -41,7 +41,7 @@ end
 function sparse_rep(W,N)
     flat = []
     for i = 1:N
-        mi = find(W[:,i])
+        mi = findall(W[:,i] .!= 0.)
         push!(flat, mi)
     end
     return flat
