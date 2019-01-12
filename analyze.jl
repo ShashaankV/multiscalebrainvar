@@ -36,8 +36,8 @@ end
 function score_analysis(re, N)
   #1 = top, 2 = bot
   half = div(N, 2)
-  a1 = length(find(re .<= half))
-  a2 = length(find(re .> half))
+  a1 = length(findall(re .<= half))
+  a2 = length(findall(re .> half))
   biggie = max(a1, a2)
   spike_asymmetry = biggie/length(re)
   if a1 > a2
@@ -81,7 +81,7 @@ function ntf(t, r, ntotal, half, netd_binsize)
   nts = zeros(length(netd_bins)-1)
 
   for j = 2:length(netd_bins)
-    tf = find(netd_bins[j-1] .<= t .< netd_bins[j])
+    tf = findall(netd_bins[j-1] .<= t .< netd_bins[j])
     T = sum(r[tf] .> half)
     B = sum(r[tf] .<= half)
     NTD = T - B #################Differences in Spikes
@@ -105,7 +105,7 @@ function nt_diff(t, r, ntotal, half, netd_binsize)
   nts = zeros(length(netd_bins)-1)
 
   for j = 2:length(netd_bins)
-    tf = find(netd_bins[j-1] .<= t .< netd_bins[j])
+    tf = findall(netd_bins[j-1] .<= t .< netd_bins[j])
     T = sum(r[tf] .> half)
     #B = sum(r[tf] .<= half)
     #NTD = T - B #################Differences in Spikes
@@ -124,7 +124,7 @@ function nt_diff_H(t, r, ntotal, half, netd_binsize)
   nts = zeros(length(netd_bins)-1)
 
   for j = 2:length(netd_bins)
-    tf = find(netd_bins[j-1] .<= t .< netd_bins[j])
+    tf = findall(netd_bins[j-1] .<= t .< netd_bins[j])
     T = sum(r[tf] .> half)
     B = sum(r[tf] .<= half)
     NTD = T - B #################Differences in Spikes
@@ -143,7 +143,7 @@ function nt_diff_angle(t, r, ntotal, P2s, P2e, netd_binsize)
   nts = zeros(length(netd_bins)-1)
 
   for j = 2:length(netd_bins)
-    tf = find(netd_bins[j-1] .<= t .< netd_bins[j])
+    tf = findall(netd_bins[j-1] .<= t .< netd_bins[j])
     T = sum(P2s .< r[tf] .< P2e)
     B = length(tf) - T
     NTD = T - B #################Differences in Spikes
@@ -403,9 +403,9 @@ end
 
 #Another way of combining wins, losses, and draws and calculating time spent in each regime
 function splice_flags(flags, times, netd_binsize)
-  l = find(flags.=="lose")
-  w = find(flags.=="win")
-  d = find(flags.=="draw")
+  l = findall(flags.=="lose")
+  w = findall(flags.=="win")
+  d = findall(flags.=="draw")
   bot = [[((times[i]-1) .* netd_binsize)+1, ((times[i+1]-1) .* netd_binsize)] for i in l]
   top = [[((times[i]-1) .* netd_binsize)+1, ((times[i+1]-1) .* netd_binsize)] for i in w]
   nmz = [[((times[i]-1) .* netd_binsize)+1, ((times[i+1]-1) .* netd_binsize)] for i in d]
@@ -440,7 +440,7 @@ function Neuron_finder(r, ns, mini)
   N = []
   #S = []
   for i in Neurons
-    a = find(r .== i)
+    a = findall(r .== i)
     if length(a) > ns
       push!(N, i)
       #push!(S, length(a))
@@ -462,17 +462,17 @@ end
 #You don't calculate statistics from neurons with too few spikes because the error on those measures is too high
 function Neurons_tb_ns(r, half, ns, mini)
   Neurons = collect(Set{Float64}(r))
-  f1, f2 = find(Neurons .> half), find(Neurons .<= half)
+  f1, f2 = findall(Neurons .> half), findall(Neurons .<= half)
   N1, N2 = Neurons[f1], Neurons[f2]
   TN, BN = [], [] #top neurons and bottom neurons; who spiked > 50 times
   for i in N1
-    if length(find(r .== i)) > ns
+    if length(findall(r .== i)) > ns
       push!(TN, i)
     end
   end
 
   for i in N2
-    if length(find(r .== i)) > ns
+    if length(findall(r .== i)) > ns
       push!(BN, i)
     end
   end
@@ -512,7 +512,7 @@ function count_train(t, r, Neurons, nn, binsize, shuff, CV)
   ##############################################################################common set of 0s is biasing the calculation?
   count1 = zeros(length(this_pool), length(bins)-1)
   for i in eachindex(tps)
-    INT = t[find(r.==tps[i])] #time points when neuron i fired
+    INT = t[findall(r.==tps[i])] #time points when neuron i fired
     if CV == true
       disi = diff(INT)
       if length(disi) > 0
@@ -520,7 +520,7 @@ function count_train(t, r, Neurons, nn, binsize, shuff, CV)
       end
     end
     for j = 1:length(bins)-1
-      count1[i,j] = length(find(bins[j] .<= INT .< bins[j+1]))
+      count1[i,j] = length(findall(bins[j] .<= INT .< bins[j+1]))
     end
   end
   if CV == true
@@ -546,13 +546,14 @@ function ligase(exons, tom, t, r, Neurons)
       space = (exons[i][1] - exons[i-1][2])-1
       c+=space
     end
-    m = find(exons[i][1] .<= t .<= exons[i][2]) #all activity during this intron
-    tm = t[m] - c
+    m = findall(exons[i][1] .<= t .<= exons[i][2]) #all activity during this intron
+    tm = t[m] .- c
     rm = r[m]
-    m2 = find(n1 .<= rm .<= n2) #localized to this pool
+    m2 = findall(n1 .<= rm .<= n2) #localized to this pool
     rmm = rm[m2]
     tmm = tm[m2]
-    tf, rf = cat(1, tf, tmm), cat(1, rf, rmm)
+    tf = vcat(tf, tmm)
+    rf = vcat(rf, rmm)
   end
   return tf[2:end], rf[2:end]
 end
@@ -586,9 +587,9 @@ function rand_pair_cor(bin, lt, lr, Neurons, n)
       end
     elseif  ((x1 in ya) & ((x2 in ya) == false)) #if you already did one but not the other
       #update shank for the new neuron
-      INT2 = lt[find(lr.==neurons[x2])]
+      INT2 = lt[findall(lr.==neurons[x2])]
       for j = 1:length(bins)-1
-        shank[x2,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x2,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       c = cor(vec(shank[x1,:]), vec(shank[x2,:]))
       push!(ya, x2)
@@ -597,9 +598,9 @@ function rand_pair_cor(bin, lt, lr, Neurons, n)
       end
     elseif ((x2 in ya) & ((x1 in ya) == false)) #if you already did the other but not the one
       #update shank for the one neuron
-      INT2 = lt[find(lr.==neurons[x1])]
+      INT2 = lt[findall(lr.==neurons[x1])]
       for j = 1:length(bins)-1
-        shank[x1,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x1,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       c = cor(vec(shank[x1,:]), vec(shank[x2,:]))
       push!(ya, x1)
@@ -608,12 +609,12 @@ function rand_pair_cor(bin, lt, lr, Neurons, n)
       end
     else #you don't have either
       #get count trains
-      INT1 = lt[find(lr.==neurons[x1])]
-      INT2 = lt[find(lr.==neurons[x2])]
+      INT1 = lt[findall(lr.==neurons[x1])]
+      INT2 = lt[findall(lr.==neurons[x2])]
       #add them to shank so you don't have to recalculate
       for j = 1:length(bins)-1
-        shank[x1,j] = length(find(bins[j] .<= INT1 .< bins[j+1]))
-        shank[x2,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x1,j] = length(findall(bins[j] .<= INT1 .< bins[j+1]))
+        shank[x2,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       #update the list of counts you already have
       push!(ya, x1)
@@ -655,9 +656,9 @@ function rand_pair_cor_e(bin, lt, lr, Neurons, n, error_code)
       end
     elseif  ((x1 in ya) & ((x2 in ya) == false)) #if you already did one but not the other
       #update shank for the new neuron
-      INT2 = lt[find(lr.==neurons[x2])]
+      INT2 = lt[findall(lr.==neurons[x2])]
       for j = 1:length(bins)-1
-        shank[x2,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x2,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       c = cor(vec(shank[x1,:]), vec(shank[x2,:]))
       push!(ya, x2)
@@ -666,9 +667,9 @@ function rand_pair_cor_e(bin, lt, lr, Neurons, n, error_code)
       end
     elseif ((x2 in ya) & ((x1 in ya) == false)) #if you already did the other but not the one
       #update shank for the one neuron
-      INT2 = lt[find(lr.==neurons[x1])]
+      INT2 = lt[findall(lr.==neurons[x1])]
       for j = 1:length(bins)-1
-        shank[x1,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x1,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       c = cor(vec(shank[x1,:]), vec(shank[x2,:]))
       push!(ya, x1)
@@ -677,12 +678,12 @@ function rand_pair_cor_e(bin, lt, lr, Neurons, n, error_code)
       end
     else #you don't have either
       #get count trains
-      INT1 = lt[find(lr.==neurons[x1])]
-      INT2 = lt[find(lr.==neurons[x2])]
+      INT1 = lt[findall(lr.==neurons[x1])]
+      INT2 = lt[findall(lr.==neurons[x2])]
       #add them to shank so you don't have to recalculate
       for j = 1:length(bins)-1
-        shank[x1,j] = length(find(bins[j] .<= INT1 .< bins[j+1]))
-        shank[x2,j] = length(find(bins[j] .<= INT2 .< bins[j+1]))
+        shank[x1,j] = length(findall(bins[j] .<= INT1 .< bins[j+1]))
+        shank[x2,j] = length(findall(bins[j] .<= INT2 .< bins[j+1]))
       end
       #update the list of counts you already have
       push!(ya, x1)
@@ -704,9 +705,9 @@ function count_train_intron(bin, lt, lr, Neurons, n, shuff)
   bins = collect(lt[1]:bin:lt[end])
   count1 = zeros(n, length(bins)-1)
   for i in eachindex(neurons)
-    INT = lt[find(lr.==neurons[i])]
+    INT = lt[findall(lr.==neurons[i])]
     for j = 1:length(bins)-1
-      count1[i,j] = length(find(bins[j] .<= INT .< bins[j+1]))
+      count1[i,j] = length(findall(bins[j] .<= INT .< bins[j+1]))
     end
   end
   return count1
@@ -724,9 +725,9 @@ function count_train_intron_e(bin, lt, lr, Neurons, n, shuff, error_code)
   bins = collect(lt[1]:bin:lt[end])
   count1 = zeros(n, length(bins)-1)
   for i in eachindex(neurons)
-    INT = lt[find(lr.==neurons[i])]
+    INT = lt[findall(lr.==neurons[i])]
     for j = 1:length(bins)-1
-      count1[i,j] = length(find(bins[j] .<= INT .< bins[j+1]))
+      count1[i,j] = length(findall(bins[j] .<= INT .< bins[j+1]))
     end
   end
   return count1
@@ -749,7 +750,7 @@ function count_train(t, r, Neurons, nn, binsize, shuff, CV)
   ##############################################################################common set of 0s is biasing the calculation?
   count1 = zeros(length(this_pool), length(bins)-1)
   for i in eachindex(tps)
-    INT = t[find(r.==tps[i])] #time points when neuron i fired
+    INT = t[findall(r.==tps[i])] #time points when neuron i fired
     if CV == true
       disi = diff(INT)
       if length(disi) > 0
@@ -757,7 +758,7 @@ function count_train(t, r, Neurons, nn, binsize, shuff, CV)
       end
     end
     for j = 1:length(bins)-1
-      count1[i,j] = length(find(bins[j] .<= INT .< bins[j+1]))
+      count1[i,j] = length(findall(bins[j] .<= INT .< bins[j+1]))
     end
   end
   if CV == true
@@ -791,8 +792,8 @@ function ligate_inputs(introns, input1, input2)
   for i in introns
     s1 = input1[i[1]:i[2]]
     s2 = input2[i[1]:i[2]]
-    i1 = cat(1, i1, s1)
-    i2 = cat(1, i2, s2)
+    i1 = vcat(i1, s1)
+    i2 = vcat(i2, s2)
   end
   s1, s2 = i1[2:end], i2[2:end]
   return s1, s2
@@ -805,7 +806,7 @@ function input_analysis(introns,input1, input2)
   for i in introns
     s1 = input1[i[1]:i[2]]
     s2 = input2[i[1]:i[2]]
-    i1, i2 = cat(1, i1, s1), cat(1, i2, s2) #this ends up being length(introns) + 1 time steps longer than it should be
+    i1, i2 = vcat(i1, s1), vcat(i2, s2) #this ends up being length(introns) + 1 time steps longer than it should be
   end
   s1, s2 = i1[2:end], i2[2:end]
   m1, m2 = mean(s1), mean(s2)
@@ -826,9 +827,9 @@ function CV_ISI(introns, Neurons, t, r)
   CVS = []
   for i in eachindex(Neurons)
     cvs = []
-    INT = t[find(r.==Neurons[i])] #times when neuron i spiked
+    INT = t[findall(r.==Neurons[i])] #times when neuron i spiked
     for j in eachindex(introns)
-      isi = diff(INT[find(introns[j][1] .<= INT .<= introns[j][2])])
+      isi = diff(INT[findall(introns[j][1] .<= INT .<= introns[j][2])])
       if length(isi) > 0
         for d in isi
           push!(cvs, d)
@@ -853,9 +854,9 @@ function CV_ISI_D(introns, Neurons, t, r)
   CVS = []
   for i in eachindex(Neurons)
     cvs = []
-    INT = t[find(r.==Neurons[i])] #times when neuron i spiked
+    INT = t[findall(r.==Neurons[i])] #times when neuron i spiked
     for j in eachindex(introns)
-      isi = diff(INT[find(introns[j][1] .<= INT .<= introns[j][2])])
+      isi = diff(INT[findall(introns[j][1] .<= INT .<= introns[j][2])])
       if length(isi) > 0
         for d in isi
           push!(cvs, d)
@@ -878,7 +879,7 @@ function CV_ISI_ALLTIME(Neurons, t, r)
   end
   CVS = []
   for i in eachindex(Neurons)
-    INT = sort(t[find(r.==Neurons[i])])
+    INT = sort(t[findall(r.==Neurons[i])])
     isi = diff(INT)
     c = cv(isi)
     if isnan(c) == false
@@ -927,11 +928,11 @@ function WTAN_Analysis(t, r, Input, end_trans, Ne, Ni, half_e, min_e_neurons, mi
 
   rt = ((ntotal - end_trans)/1000.)*h
 
-  ex = find(r .<= Ne)
+  ex = findall(r .<= Ne)
   te = t[ex]
   re = r[ex]
 
-  ix = find(r .> Ne)
+  ix = findall(r .> Ne)
   ti = t[ix]
   ri = r[ix]
 
@@ -945,10 +946,10 @@ function WTAN_Analysis(t, r, Input, end_trans, Ne, Ni, half_e, min_e_neurons, mi
   e_bot_pt = E_bot[:, end_trans:end]
   i_pop_pt = I_Input[:, end_trans:end]
 
-  tem = find(te.> end_trans)
+  tem = findall(te.> end_trans)
   te_pt = te[tem]
   re_pt = re[tem]
-  tim = find(ti.> end_trans)
+  tim = findall(ti.> end_trans)
   ti_pt = ti[tim]
   ri_pt = ri[tim]
 
@@ -959,8 +960,8 @@ function WTAN_Analysis(t, r, Input, end_trans, Ne, Ni, half_e, min_e_neurons, mi
   else
   I_Neurons = Neuron_finder(ri_pt, 10, min_i_neurons)
   #rates
-  E_Rates = [length(find(re_pt .== i))/rt for i=1:Ne]
-  I_Rates = [length(find(ri_pt .== i))/rt for i=1:Ni]
+  E_Rates = [length(findall(re_pt .== i))/rt for i=1:Ne]
+  I_Rates = [length(findall(ri_pt .== i))/rt for i=1:Ni]
 
   #counts
   E_count_top = count_train_intron(fbinsize, te_pt, re_pt, top_e_neurons, length(top_e_neurons), false)
@@ -1005,17 +1006,17 @@ function WTAN_no_input(t, r, end_trans, Ne, Ni, half_e, min_e_neurons, min_i_neu
 
   rt = ((ntotal - end_trans)/1000.)*h
 
-  ex = find(r .<= Ne)
+  ex = findall(r .<= Ne)
   te = t[ex]
   re = r[ex]
 
-  ix = find(r .> Ne)
+  ix = findall(r .> Ne)
   ti = t[ix]
   ri = r[ix]
-tem = find(te.> end_trans)
+tem = findall(te.> end_trans)
   te_pt = te[tem]
   re_pt = re[tem]
-  tim = find(ti.> end_trans)
+  tim = findall(ti.> end_trans)
   ti_pt = ti[tim]
   ri_pt = ri[tim]
 
@@ -1026,8 +1027,8 @@ tem = find(te.> end_trans)
   else
   I_Neurons = Neuron_finder(ri_pt, 10, min_i_neurons)
   #rates
-  E_Rates = [length(find(re_pt .== i))/rt for i=1:Ne]
-  I_Rates = [length(find(ri_pt .== i))/rt for i=1:Ni]
+  E_Rates = [length(findall(re_pt .== i))/rt for i=1:Ne]
+  I_Rates = [length(findall(ri_pt .== i))/rt for i=1:Ni]
 
   #counts
   E_count_top = count_train_intron(fbinsize, te_pt, re_pt, top_e_neurons, length(top_e_neurons), false)
@@ -1065,11 +1066,11 @@ function Rivalry_Analysis(t, r, Input, adapt, end_trans, Ne, Ni, half_e, min_e_n
 
   rt = ((ntotal - end_trans)/1000.)*h
 
-  ex = find(r .<= Ne)
+  ex = findall(r .<= Ne)
   te = t[ex]
   re = r[ex]
 
-  ix = find(r .> Ne)
+  ix = findall(r .> Ne)
   ti = t[ix]
   ri = r[ix]
 
@@ -1106,8 +1107,8 @@ function Rivalry_Analysis(t, r, Input, adapt, end_trans, Ne, Ni, half_e, min_e_n
 
   ###Use this code for spiking statistics, which includes only dominance and suppression times; mixed percept time is absorbed into either of those
   t2, f2 = splice_reversions(flags, times) ###Another way to get rid of rapid switches that aren't really there
-  fw = find(f2 .== "win")
-  fl = find(f2 .== "lose")
+  fw = findall(f2 .== "win")
+  fl = findall(f2 .== "lose")
   tx = t2 .* netd_binsize
   d = convert(Array{Float64}, diff(tx))
   cvd2 = cv(d) ### Another estimate of CVD
@@ -1218,8 +1219,8 @@ function ligate_inputs(introns, input1, input2)
   for i in introns
     s1 = input1[i[1]:i[2]]
     s2 = input2[i[1]:i[2]]
-    i1 = cat(1, i1, s1)
-    i2 = cat(1, i2, s2)
+    i1 = vcat(i1, s1)
+    i2 = vcat(i2, s2)
   end
   s1, s2 = i1[2:end], i2[2:end]
   return s1, s2
@@ -1534,7 +1535,7 @@ function single_neuron_noise(tau, vth, S, runtime, h)
 end
 
 function weights_lookup(i, raster, W, compartments, index_increment)
-  kx = find(raster .== i)
+  kx = findall(raster .== i)
   outs = zeros(4)
   if length(kx) > 0
     for j = 1:4

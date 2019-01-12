@@ -81,14 +81,14 @@ fbinsize = 400/h
 cbinsize = 100/h
 netd_binsize = 50/h
 
-e_m = find(r .<= Ne);
+e_m = findall(r .<= Ne);
 # i_m = find(r .> Ne);
 te = t[e_m];
 re = r[e_m];
 # ti = t[i_m];
 # ri = r[i_m];
 
-er1 = Set(find(re .< Ne2));
+er1 = Set(findall(re .< Ne2));
 er2 = setdiff(Set(1:length(re)), er1);
 # ir1 = Set(find(ri .< Ne + Ni2));
 # ir2 = setdiff(Set(1:length(ri)), ir1);

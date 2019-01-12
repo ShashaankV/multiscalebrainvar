@@ -129,7 +129,7 @@ function euler_lif_CSR(h, total, Ne, W, CSR, fe1, fe2, input_frac, vth, tau_m, t
       vsm = sum(vs)
 
       if vsm > 0
-        spe = find(vs)
+        spe = findall(vs)
         for j = 1:vsm
           js = spe[j]
           delta_h, x = interpolate_spike(V[js], V_buff[js], vth)
