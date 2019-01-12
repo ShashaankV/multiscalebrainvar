@@ -84,8 +84,8 @@ CSR = sparse_rep(W, N);
 @time t, r = euler_lif_2x2_CSR_OU(h, runtime, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vth, tau_m, tau_s)
 
 #Chunk raster into excitatory and inhibitory components
-e_m = find(r .<= Ne);
-i_m = find(r .> Ne);
+e_m = findall(r .<= Ne);
+i_m = findall(r .> Ne);
 te = t[e_m];
 re = r[e_m];
 ti = t[i_m];

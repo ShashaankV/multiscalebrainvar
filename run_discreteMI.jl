@@ -58,8 +58,8 @@ write_raster(fo, t, r)
 ##########################
 
 ###prelims####
-e_m = find(r .<= Ne2);
-i_m = find(r .> Ne2);
+e_m = findall(r .<= Ne2);
+i_m = findall(r .> Ne2);
 te = t[e_m];
 re = r[e_m];
 ti = t[i_m];
@@ -103,7 +103,7 @@ CV_BD = CV_ISI(top, BN, tbdf, rbdf)
 CV_TD = CV_ISI(bot, TN, ttdf, rtdf)
 
 #dominance durations, d and dx are arrays of dominance times
-d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
+d = convert(Array{Float64}, diff(netd_binsize/(1000. /h) .* times))
 cvd = cv(d)
 
 #report thresholded (LP) dominance statistics

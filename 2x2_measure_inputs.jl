@@ -85,7 +85,7 @@ end
 function sparse_rep(W,N)
     flat = []
     for i = 1:N
-        mi = find(W[:,i])
+        mi = findall(W[:,i] .!= 0.)
         push!(flat, mi)
     end
     return flat
@@ -519,7 +519,7 @@ function euler_lif_2x2_CSR_OU(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vt
       vsm = sum(vs)
 
       if vsm > 0
-        sp = find(vs)
+        sp = findall(vs)
         for j = 1:vsm
           js = sp[j]
           delta_h = interpolate_spike(V[js], V_buff[js], vth)
