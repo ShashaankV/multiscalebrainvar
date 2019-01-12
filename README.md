@@ -10,7 +10,7 @@ Original code written by Benjamin P Cohen (<url>https://github.com/benja-matic</
 
 ## Prerequisites
 
-Computer code uses Julia v 0.6.0 for simulations. Requires "Distributions" package.
+Computer code uses Julia v 0.6.0 for simulations; the branch 'julia1' includes code adapted to Julia v 1.1. Requires "Distributions" package.
 
 ## Data
 
