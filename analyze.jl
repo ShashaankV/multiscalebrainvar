@@ -891,6 +891,22 @@ function CV_ISI_ALLTIME(Neurons, t, r)
   return x
 end
 
+function get_skew(x)
+    n = length(x)
+    skew_e = zeros(n)
+    vary_e = zeros(n)
+    m=mean(x)
+    for i = 1:n
+        d = x[i] - m
+        skew_e[i] = d^3
+        vary_e[i] = d^2
+    end
+    ms = mean(skew_e)
+    mv = mean(vary_e)
+    skewness = ms/(mv^1.5)
+    return skewness
+end
+
 #Get mean, std, skew, kurtosis of a signal x
 function moments(x)
   n = length(x)

@@ -2,12 +2,13 @@ include("continuum.jl")
 include("analyze.jl")
 
 println("This code simulates rivalry in the continuum network with adaptation.
-Same parameters used for Figure 3 and 4.")
+Same parameters used for Figure 3 and 4.
+This code is specifically designed to check how skewness changes as a function of drive strength for reviewer #1")
 
 using SpecialFunctions
 using Random
 using Statistics
-Random.seed!(21344)
+Random.seed!(2134)
 
 #Coupling widths
 kee = .26
@@ -37,11 +38,10 @@ tau_s = 2.
 tau_a = 650.
 g_a = 0.013 #adaptation strength
 #Feedforward input to excitatory neurons
-s1 = 3.
-s2 = 3.
+
 #Time
-runtime = 60*1000#ms
-h = .01 #time step
+runtime = 250*1000#ms
+h = .1 #time step
 ntotal = round(runtime/h) #time points
 rt = ((ntotal)/1000.)*h #runtime in seconds
 Ne2 = div(Ne, 2)
@@ -59,13 +59,23 @@ ang = 0
 W = Weights(Ne,Ni,kee,kei,kie,kii,Aee,Aei,Aie,Aii,p)
 CSR = sparse_rep(W, N)
 
+drive_var = collect(150:4.5:600) ./ 100.
+SKEWNESS = zeros(100)
+CVD_STORE = zeros(100)
+MEAN_STORE = zeros(100)
+# DRIVE=50
+for DRIVE=1:100
+
+s1 = drive_var[DRIVE]
+s2 = drive_var[DRIVE]
+
 #run simulation
 @time t, r = euler_lif_CSR(h, runtime, Ne, W, CSR, s1, s2, input_width, vth, tau_m, tau_s, tau_a, g_a, ang)
 
-fo="raster_continuum.txt" #filename to save data under
+# fo="raster_continuum.txt" #filename to save data under
 #write_raster: writes spike times to comma-delimited text file
 #column 1: time (in iterations), column 2: neuron index
-write_raster(fo, t, r)
+# write_raster(fo, t, r)
 
 
 ###########################
@@ -141,3 +151,8 @@ cvdlp = cv(dx);
 
 
 MDT, MDB = (tdom*1. / length(top)), (bdom*1. / length(bot));
+
+SKEWNESS[DRIVE] = get_skew(dx)
+MEAN_STORE[DRIVE] = mean(dx)
+CVD_STORE[DRIVE] = cvdlp
+end
