@@ -8,6 +8,7 @@ This code is specifically designed to check how skewness changes as a function o
 using SpecialFunctions
 using Random
 using Statistics
+using Distributions
 Random.seed!(2134)
 
 #Coupling widths
@@ -59,12 +60,12 @@ ang = 0
 W = Weights(Ne,Ni,kee,kei,kie,kii,Aee,Aei,Aie,Aii,p)
 CSR = sparse_rep(W, N)
 
-drive_var = collect(150:4.5:600) ./ 100.
-SKEWNESS = zeros(100)
-CVD_STORE = zeros(100)
-MEAN_STORE = zeros(100)
-# DRIVE=50
-for DRIVE=1:100
+drive_var = collect(150:650) ./ 100.
+SKEWNESS = zeros(501)
+CVD_STORE = zeros(501)
+MEAN_STORE = zeros(501)
+
+for DRIVE=1:450
 
 s1 = drive_var[DRIVE]
 s2 = drive_var[DRIVE]
@@ -152,7 +153,9 @@ cvdlp = cv(dx);
 
 MDT, MDB = (tdom*1. / length(top)), (bdom*1. / length(bot));
 
-SKEWNESS[DRIVE] = get_skew(dx)
+SKEWNESS[DRIVE] = skewness(dx)
 MEAN_STORE[DRIVE] = mean(dx)
 CVD_STORE[DRIVE] = cvdlp
 end
+
+write_raster("continuum_drive_skewness.txt", drive_var, SKEWNESS)

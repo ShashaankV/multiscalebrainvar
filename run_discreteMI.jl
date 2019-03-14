@@ -42,6 +42,8 @@ g_a = 0.44
 
 runtime = 10*1000 #ms
 h = .1 #timestep
+ntotal = round(runtime/h) #time points
+rt = ((ntotal)/1000.)*h #runtime in seconds
 
 W = homogenous_4x4_weights(N, IFRAC, k, Aee, Aei, Aie, Aie_NL, Aii);
 CSR = sparse_rep(W, N);

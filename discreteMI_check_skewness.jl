@@ -4,6 +4,13 @@ Same parameters used for Figure 3 and 4.")
 
 include("discreteMI.jl")
 include("analyze.jl")
+using SpecialFunctions
+using Random
+using Statistics
+using Distributions
+Random.seed!(2134)
+
+#Coupling widths
 
 Aee = 10.5
 Aei = 20.
@@ -36,16 +43,18 @@ g_a = 0.44
 
 runtime = 250*1000 #ms
 h = .1 #timestep
+ntotal = round(runtime/h) #time points
+rt = ((ntotal)/1000.)*h #runtime in seconds
 
 W = homogenous_4x4_weights(N, IFRAC, k, Aee, Aei, Aie, Aie_NL, Aii);
 CSR = sparse_rep(W, N);
 
-drive_var = collect(150:4.5:600) ./ 100.;
-SKEWNESS = zeros(100);
-CVD_STORE = zeros(100);
-MEAN_STORE = zeros(100);
+drive_var = collect(200:700) ./ 100.;
+SKEWNESS = zeros(501);
+CVD_STORE = zeros(501);
+MEAN_STORE = zeros(501);
 
-for DRIVE=1:100
+for DRIVE=1:501
 
 s_strength = drive_var[DRIVE]
 fe1 = s_strength
@@ -71,6 +80,15 @@ te = t[e_m];
 re = r[e_m];
 ti = t[i_m];
 ri = r[i_m];
+
+#prelims
+min_e_neurons = 20
+min_i_neurons = 50
+min_spikes_e = 10
+min_spikes_i = 10
+fbinsize = 400/h
+cbinsize = 100/h
+netd_binsize = 50/h
 
 TN, BN = Neurons_tb_ns(re, NeL, 10, 100) #neurons in either pool who fired at least 10 spkes in simulation
 
@@ -122,6 +140,7 @@ for i in d
         push!(dx, i)
     end
 end
+
 dx = convert(Array{Float64}, dx)
 
 cvdlp = cv(dx) #cvd after thresholding
@@ -130,7 +149,8 @@ MDT = tdom/length(top) #mean dominance, pool 1
 MDB = bdom/length(bot) #mean dominance, pool 2
 MDN = tnmz/length(nmz)
 
-SKEWNESS[DRIVE] = get_skew(dx)
+SKEWNESS[DRIVE] = skewness(dx)
 MEAN_STORE[DRIVE] = mean(dx)
 CVD_STORE[DRIVE] = cvdlp
+
 end
