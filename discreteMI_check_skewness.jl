@@ -154,3 +154,5 @@ MEAN_STORE[DRIVE] = mean(dx)
 CVD_STORE[DRIVE] = cvdlp
 
 end
+write_raster("discrete_drive_skewness.txt", drive_var, SKEWNESS)
+write_raster("discrete_drive_CVD.txt", drive_var, CVD_STORE)
