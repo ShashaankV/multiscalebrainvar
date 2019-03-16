@@ -64,7 +64,7 @@ drive_var = collect(150:650) ./ 100.
 SKEWNESS = zeros(501)
 CVD_STORE = zeros(501)
 MEAN_STORE = zeros(501)
-
+# DRIVE=1
 for DRIVE=1:450
 
 s1 = drive_var[DRIVE]
