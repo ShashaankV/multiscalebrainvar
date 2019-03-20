@@ -115,14 +115,14 @@ ttdf, rtdf = ligase(bot, bdom, te, re, TN); #top pool down states
 #spike-time correlations
 cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000);
 cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000);
-cwBd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000);
-cwTd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000);
+cwBd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000);
+cwTd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000);
 
 #CVISI
 CV_TU = CV_ISI(top, TN, te, re);
 CV_BU = CV_ISI(bot, BN, te, re);
-CV_BD = CV_ISI(top, BN, tbdf, rbdf);
-CV_TD = CV_ISI(bot, TN, ttdf, rtdf);
+CV_BD = CV_ISI(top, BN, te, re);
+CV_TD = CV_ISI(bot, TN, te, re);
 
 #dominance statistics
 d = convert(Array{Float64}, diff(netd_binsize/(1000. / h) .* times));
