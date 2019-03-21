@@ -5,6 +5,12 @@ Same parameters used for Figure 3 and 4.")
 include("discreteMI.jl")
 include("analyze.jl")
 
+using SpecialFunctions
+using Random
+using Statistics
+Random.seed!(21344)
+
+
 Aee = 10.5
 Aei = 20.
 Aie = 30.
@@ -40,8 +46,12 @@ tau_s = 2.
 tau_a = 350.
 g_a = 0.44
 
-runtime = 10*1000 #ms
-h = .1 #timestep
+runtime = 60*1000#ms
+h = .1 #time step
+ntotal = round(runtime/h) #time points
+rt = ((ntotal)/1000.)*h #runtime in seconds
+
+
 
 W = homogenous_4x4_weights(N, IFRAC, k, Aee, Aei, Aie, Aie_NL, Aii);
 CSR = sparse_rep(W, N);
@@ -57,13 +67,22 @@ write_raster(fo, t, r)
 ###calculate statistics###
 ##########################
 
-###prelims####
 e_m = findall(r .<= Ne2);
 i_m = findall(r .> Ne2);
 te = t[e_m];
 re = r[e_m];
 ti = t[i_m];
 ri = r[i_m];
+
+#prelims
+min_e_neurons = 20
+min_i_neurons = 50
+min_spikes_e = 10
+min_spikes_i = 10
+fbinsize = 400/h
+cbinsize = 100/h
+netd_binsize = 50/h
+
 
 TN, BN = Neurons_tb_ns(re, NeL, 10, 100) #neurons in either pool who fired at least 10 spkes in simulation
 

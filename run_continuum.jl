@@ -7,7 +7,8 @@ Same parameters used for Figure 3 and 4.")
 using SpecialFunctions
 using Random
 using Statistics
-#srand(2134)
+Random.seed!(21344)
+
 
 #Coupling widths
 kee = .26
