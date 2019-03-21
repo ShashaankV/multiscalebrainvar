@@ -5,6 +5,11 @@ Same parameters used for Figure 3 and 4.")
 include("discreteMI.jl")
 include("analyze.jl")
 
+using SpecialFunctions
+using Random
+using Statistics
+Random.seed!(21344)
+
 Aee = 10.5
 Aei = 20.
 Aie = 30.
@@ -44,6 +49,14 @@ runtime = 10*1000 #ms
 h = .1 #timestep
 ntotal = round(runtime/h) #time points
 rt = ((ntotal)/1000.)*h #runtime in seconds
+
+min_e_neurons = 20
+min_i_neurons = 50
+min_spikes_e = 10
+min_spikes_i = 10
+fbinsize = 400/h
+cbinsize = 100/h
+netd_binsize = 50/h
 
 W = homogenous_4x4_weights(N, IFRAC, k, Aee, Aei, Aie, Aie_NL, Aii);
 CSR = sparse_rep(W, N);

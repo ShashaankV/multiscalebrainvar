@@ -41,7 +41,7 @@ s1 = 3.
 s2 = 3.
 #Time
 runtime = 60*1000#ms
-h = .01 #time step
+h = .1 #time step
 ntotal = round(runtime/h) #time points
 rt = ((ntotal)/1000.)*h #runtime in seconds
 Ne2 = div(Ne, 2)
