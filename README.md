@@ -20,6 +20,6 @@ Calculations such as CVISI, CVD, and mean dominance duration are included in "ru
 
 ## Code for three network architectures
 
-There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_". Base "run_" codes can be used to generate demo data and run analyses. Simulation time depends on the computer system. Demos take approximately 
+There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_". Base "run_" codes can be used to generate demo data and run analyses. Simulation time depends on the computer system. Demos take less than a minute.
 
 <!--What things you need to install the software and how to install them -->
