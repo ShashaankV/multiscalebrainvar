@@ -10,7 +10,7 @@ Original code written by Benjamin P Cohen (<url>https://github.com/benja-matic</
 
 ## Prerequisites
 
-Computer code uses Julia v 0.6.0 for simulations; the branch 'julia1' includes code adapted to Julia v 1.1. Requires "Distributions" package.
+Computer code requires installation of Julia v 0.6.0 or Julia v 1.1 for simulations; the branch 'julia1' includes code adapted to Julia v 1.1. Requires "Distributions" package. Installation time should be minutes for basic Julia and necessary packages.
 
 ## Data
 
@@ -20,7 +20,6 @@ Calculations such as CVISI, CVD, and mean dominance duration are included in "ru
 
 ## Code for three network architectures
 
-There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_".
-
+There are three network architectures: 1): unstructured network, 2) discrete mutual inhibition network (between unstructured pools), and 3) structured continuum network. Main codes for running simulations start with "run_". Base "run_" codes can be used to generate demo data and run analyses. Simulation time depends on the computer system. Demos take approximately 
 
 <!--What things you need to install the software and how to install them -->
