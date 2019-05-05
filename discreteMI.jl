@@ -195,7 +195,7 @@ function molda_euler_lif_CSR_IS(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, 
       vsm = sum(vs)
 
       if vsm > 0
-        sp = find(vs)
+        sp = findall(vs)
         for j = 1:vsm
           js = sp[j]
           delta_h = interpolate_spike(V[js], V_buff[js], vth)
@@ -264,7 +264,7 @@ function molda_euler_lif_CSR_output(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, f
       vsm = sum(vs)
 
       if vsm > 0
-        sp = find(vs)
+        sp = findall(vs)
         for j = 1:vsm
           js = sp[j]
           delta_h = interpolate_spike(V[js], V_buff[js], vth)
@@ -289,3 +289,63 @@ function molda_euler_lif_CSR_output(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, f
     end
     return time, raster, SO1, SO2
   end
+
+
+  function molda_euler_lif_CSR_noa(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vth, tau_m, tau_s)
+
+    #Divide each chunk of the network
+    N2 = Int64(round(N/2))
+    NiL = Int64(round(N2/IFRAC))
+    NeL = Int64(N2-NiL)
+    Ne2 = NeL*2
+    Ni2 = NiL*2
+
+    #Feedforward input
+    drive = zeros(N)
+    drive[1:NeL] .+= fe1 * h
+    drive[NeL+1:Ne2] .+= fe2 * h
+    drive[Ne2+1:Ne2+NiL] .+= fi1 * h
+    drive[Ne2+NiL+1:N] .+= fi2 * h
+
+    #time
+    ntotal = round(Int64, total/h)
+    time = Float64[0]
+    raster = Float64[0]
+
+    #State Variables
+    V = rand(N)*vth
+    V_buff = V
+    syn = zeros(N)
+
+    #Compute leak terms once in advance (state_variable = state_variable - state_variable*h/tau)
+    m_leak = h/tau_m
+    s_leak = h/tau_s
+
+    kill_flag = false
+
+    for iter = 1:ntotal
+
+        V .+= drive .+ (h*syn) .- (V*m_leak)
+        syn .-= (syn .* s_leak)
+
+        vs = (V .> vth)
+        vsm = sum(vs)
+
+        if vsm > 0
+          sp = findall(vs)
+          for j = 1:vsm
+            js = sp[j]
+            delta_h = interpolate_spike(V[js], V_buff[js], vth)
+            lx = exp(-delta_h*h/tau_s)
+            syn[CSR[js]] .+= W[CSR[js], js] .* lx
+            push!(raster, js)
+            push!(time, iter-delta_h)
+          end
+        end
+
+        V .-= vth*vs
+        V_buff = V
+
+      end
+      return time, raster
+    end
