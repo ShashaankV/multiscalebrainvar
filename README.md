@@ -6,7 +6,7 @@ Computer code accompanying manuscript on multiscale variability in neuronal comp
 
 Original code written by Benjamin P Cohen (<url>https://github.com/benja-matic</url>). Repository generated and maintained by Shashaank Vattikuti. Please cite this manuscript if you use the code:
 
-<i>Multiscale variability in neuronal competition. Benjamin P Cohen, Carson C Chow, and Shashaank Vattikuti. 	arXiv:1811.07012 [q-bio.NC]</i>
+<i>Cohen, Benjamin P., Carson C. Chow, and Shashaank Vattikuti. "Dynamical modeling of multi-scale variability in neuronal competition." Communications biology 2, no. 1 (2019): 1-11.</i>
 
 ## Prerequisites
 
