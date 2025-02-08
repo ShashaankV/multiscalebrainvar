@@ -4,7 +4,7 @@ function cv(isi)
 end
 
 function sd_2_k(sd)
-  return 1./(2*pi*((sd)^2))
+  return 1. /  (2*pi*((sd)^2))
 end
 
 function FANO(aRAY)
@@ -462,17 +462,17 @@ end
 #You don't calculate statistics from neurons with too few spikes because the error on those measures is too high
 function Neurons_tb_ns(r, half, ns, mini)
   Neurons = collect(Set{Float64}(r))
-  f1, f2 = find(Neurons .> half), find(Neurons .<= half)
+  f1, f2 = findall(!iszero, Neurons .> half), findall(!iszero, Neurons .<= half)
   N1, N2 = Neurons[f1], Neurons[f2]
   TN, BN = [], [] #top neurons and bottom neurons; who spiked > 50 times
   for i in N1
-    if length(find(r .== i)) > ns
+    if length(findall(!iszero, r .== i)) > ns
       push!(TN, i)
     end
   end
 
   for i in N2
-    if length(find(r .== i)) > ns
+    if length(findall(!iszero, r .== i)) > ns
       push!(BN, i)
     end
   end
@@ -1090,7 +1090,7 @@ function Rivalry_Analysis(t, r, Input, adapt, end_trans, Ne, Ni, half_e, min_e_n
   s = ntd ./ nts #signal for dominances
   flags, times = WLD_01(s, -.333, .333)
 
-  d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
+  d = convert(Array{Float64}, diff(netd_binsize/(1000. / h) .* times))
   cvd = cv(d) ###Raw estimate of CVD, likely to include very rapid switches which should really be smoothed out
 
   LP = .3

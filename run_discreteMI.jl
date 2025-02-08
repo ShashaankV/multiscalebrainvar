@@ -57,68 +57,68 @@ write_raster(fo, t, r)
 ###calculate statistics###
 ##########################
 
-###prelims####
-e_m = find(r .<= Ne2);
-i_m = find(r .> Ne2);
-te = t[e_m];
-re = r[e_m];
-ti = t[i_m];
-ri = r[i_m];
+# ###prelims####
+# e_m = findall(!iszero, r .<= Ne2);
+# i_m = findall(!iszero, r .> Ne2);
+# te = t[e_m];
+# re = r[e_m];
+# ti = t[i_m];
+# ri = r[i_m];
 
-TN, BN = Neurons_tb_ns(re, NeL, 10, 100) #neurons in either pool who fired at least 10 spkes in simulation
+# TN, BN = Neurons_tb_ns(re, NeL, 10, 100) #neurons in either pool who fired at least 10 spkes in simulation
 
-ntd, nts = nt_diff_H(te, re, ntotal, NeL, netd_binsize)
+# ntd, nts = nt_diff_H(te, re, N, NeL, netd_binsize)
 
-s = ntd ./ nts #signal for dominances
+# s = ntd ./ nts #signal for dominances
 
-flags, times = WLD_01(s, -.333, .333)
+# flags, times = WLD_01(s, -.333, .333)
 
-top, tdom, bot, bdom, nmz, tnmz = splice_flags(flags, times, netd_binsize) #find win, lose, and draw times
+# top, tdom, bot, bdom, nmz, tnmz = splice_flags(flags, times, netd_binsize) #find win, lose, and draw times
 
-tbf, rbf = ligase(bot, bdom, te, re, BN) #bottom pool up states
+# tbf, rbf = ligase(bot, bdom, te, re, BN) #bottom pool up states
 
-ttf, rtf = ligase(top, tdom, te, re, TN) #top pool up states
+# ttf, rtf = ligase(top, tdom, te, re, TN) #top pool up states
 
-tbdf, rbdf = ligase(top, tdom, te, re, BN) #bottom pool down states
+# tbdf, rbdf = ligase(top, tdom, te, re, BN) #bottom pool down states
 
-ttdf, rtdf = ligase(bot, bdom, te, re, TN) #top pool down states
+# ttdf, rtdf = ligase(bot, bdom, te, re, TN) #top pool down states
 
 
-####main statistics###
-#T:= pool1
-#B:=pool 2
-#U: dominance state
-#D: suppressed state
+# ####main statistics###
+# #T:= pool1
+# #B:=pool 2
+# #U: dominance state
+# #D: suppressed state
 
-#spike-time correlations
-cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000);
-cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000);
-cwBd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000);
-cwTd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000);
+# #spike-time correlations
+# cwTu = rand_pair_cor(cbinsize, ttf, rtf, TN, 1000);
+# cwBu = rand_pair_cor(cbinsize, tbf, rbf, BN, 1000);
+# cwBd = rand_pair_cor(cbinsize, tbdf, rbdf, BN, 1000);
+# cwTd = rand_pair_cor(cbinsize, ttdf, rtdf, TN, 1000);
 
-#CV ISI, vector across sampled neurons
-CV_TU = CV_ISI(top, TN, te, re)
-CV_BU = CV_ISI(bot, BN, te, re)
-CV_BD = CV_ISI(top, BN, te, re)
-CV_TD = CV_ISI(bot, TN, te, re)
+# #CV ISI, vector across sampled neurons
+# CV_TU = CV_ISI(top, TN, te, re)
+# CV_BU = CV_ISI(bot, BN, te, re)
+# CV_BD = CV_ISI(top, BN, te, re)
+# CV_TD = CV_ISI(bot, TN, te, re)
 
-#dominance durations, d and dx are arrays of dominance times
-d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
-cvd = cv(d)
+# #dominance durations, d and dx are arrays of dominance times
+# d = convert(Array{Float64}, diff(netd_binsize/(1000./h) .* times))
+# cvd = cv(d)
 
-#report thresholded (LP) dominance statistics
-LP = .3
+# #report thresholded (LP) dominance statistics
+# LP = .3
 
-dx = []
-for i in d
-    if i > LP
-        push!(dx, i)
-    end
-end
-dx = convert(Array{Float64}, dx)
+# dx = []
+# for i in d
+#     if i > LP
+#         push!(dx, i)
+#     end
+# end
+# dx = convert(Array{Float64}, dx)
 
-cvdlp = cv(dx) #cvd after thresholding
+# cvdlp = cv(dx) #cvd after thresholding
 
-MDT = tdom/length(top) #mean dominance, pool 1
-MDB = bdom/length(bot) #mean dominance, pool 2
-MDN = tnmz/length(nmz)
+# MDT = tdom/length(top) #mean dominance, pool 1
+# MDB = bdom/length(bot) #mean dominance, pool 2
+# MDN = tnmz/length(nmz)

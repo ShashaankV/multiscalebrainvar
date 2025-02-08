@@ -59,7 +59,7 @@ end
 function sparse_rep(W,N)
     flat = []
     for i = 1:N
-        mi = find(W[:,i])
+        mi = findall(!iszero, W[:, i])
         push!(flat, mi)
     end
     return flat
@@ -125,14 +125,14 @@ function molda_euler_lif_CSR(h, total, N, IFRAC, W, CSR, fe1, fi1, fe2, fi2, vth
       vsm = sum(vs)
 
       if vsm > 0
-        sp = find(vs)
+        sp = findall(!iszero, vs)
         for j = 1:vsm
           js = sp[j]
           delta_h = interpolate_spike(V[js], V_buff[js], vth)
           lx = exp(-delta_h*h/tau_s)
           syn[CSR[js]] .+= W[CSR[js], js] .* lx
           if js <= Ne2
-            A[js] .+= 1
+            A[js] += 1
           end
           push!(raster, js)
           push!(time, iter-delta_h)
